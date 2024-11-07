@@ -1,0 +1,63 @@
+#cloud-config
+# See the autoinstall documentation at:
+# https://canonical-subiquity.readthedocs-hosted.com/en/latest/reference/autoinstall-reference.html
+autoinstall:
+  apt:
+    disable_components: []
+    fallback: offline-install
+    geoip: true
+    mirror-selection:
+      primary:
+      - country-mirror
+      - arches: &id001
+        - amd64
+        uri: http://archive.ubuntu.com/ubuntu/
+      - arches: &id002
+        - arm64
+        uri: http://ports.ubuntu.com/ubuntu-ports
+    preserve_sources_list: false
+    security:
+    - arches: *id001
+      uri: http://security.ubuntu.com/ubuntu/
+    - arches: *id002
+      uri: http://ports.ubuntu.com/ubuntu-ports
+  codecs:
+    install: false
+  drivers:
+    install: false
+  identity:
+    hostname: edge
+    password: REDACTED
+    realname: Ansible user
+    username: ansible
+  kernel:
+    package: linux-generic
+  keyboard:
+    layout: fr
+    toggle: null
+    variant: ''
+  locale: en_US.UTF-8
+  network:
+    ethernets:
+      enp0s1:
+        dhcp4: true
+    version: 2
+  oem:
+    install: auto
+  packages:
+    - ripgrep
+    - vim
+    - ubuntu-desktop
+  late-commands:
+    - curtin in-target -- apt-get update
+    - curtin in-target -- apt-get upgrade -yq
+  source:
+    id: ubuntu-server
+    search_drivers: true
+  ssh:
+    allow-pw: false
+    authorized-keys:
+      - ssh-ed25519 <REDACTED> ansible
+    install-server: true
+  updates: security
+  version: 1
